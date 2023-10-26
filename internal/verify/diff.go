@@ -45,22 +45,11 @@ func SetTagsDiff(ctx context.Context, diff *schema.ResourceDiff, meta interface{
 	}
 
 	if diff.HasChange("tags") {
-		_, n := diff.GetChange("tags")
-		newTags := tftags.New(ctx, n.(map[string]interface{}))
-
-		if newTags.HasZeroValue() {
-			if err := diff.SetNewComputed("tags_all"); err != nil {
-				return fmt.Errorf("setting tags_all to computed: %w", err)
-			}
-		}
-
-		if len(allTags) > 0 && (!newTags.HasZeroValue() || !allTags.HasZeroValue()) {
+		if len(allTags) > 0 {
 			if err := diff.SetNew("tags_all", allTags.Map()); err != nil {
 				return fmt.Errorf("setting new tags_all diff: %w", err)
 			}
-		}
-
-		if len(allTags) == 0 {
+		} else if len(allTags) == 0 {
 			if err := diff.SetNewComputed("tags_all"); err != nil {
 				return fmt.Errorf("setting tags_all to computed: %w", err)
 			}
