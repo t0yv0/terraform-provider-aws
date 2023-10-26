@@ -239,7 +239,12 @@ func TestSetTagsDiff(t *testing.T) {
 				}),
 			}),
 			expectedTagsAll: cty.MapVal(map[string]cty.Value{
-				// This is really not right. It looks like
+				// This is really not right. It looks like SetTagsDiff can now copy
+				// tags to tags_all, but because tag1 is empty and tags_all is a
+				// computed attribute, it activates finalizeDiff clause that decides that this empty value
+				// is really unknown after all, causing this problem!
+				//
+				// https://github.com/hashicorp/terraform-plugin-sdk/blob/main/helper/schema/schema.go#L534
 				"tag1": cty.UnknownVal(cty.String),
 			}),
 		},
